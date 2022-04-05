@@ -1,9 +1,9 @@
 # Урок 1. Qt Creator: основы
 ## Разработка программ с графическим интерфейсом на С++
 
-OS windows 10 pro 64
-Qt Creator 5.0.2
-Based on Qt 5.15.2 
+* OS windows 10 pro 64
+* Qt Creator 5.0.2
+* Based on Qt 5.15.2 
 
 
 
