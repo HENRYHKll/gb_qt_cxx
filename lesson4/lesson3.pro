@@ -1,4 +1,4 @@
-QT       += core gui network positioning
+QT       += core gui network positioning widgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -11,11 +11,13 @@ CONFIG += c++11
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
-    highlighter.cpp
+    highlighter.cpp \
+    settingswidget.cpp
 
 HEADERS += \
     mainwindow.h \
-    highlighter.h
+    highlighter.h \
+    settingswidget.h
 
 FORMS += \
     mainwindow.ui

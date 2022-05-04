@@ -116,6 +116,7 @@ void MainWindow::on_actionSave_clicked() {
 }
 
 void MainWindow::on_actionOpen_clicked() {
+  ui->plainTextEdit->setReadOnly(false);
   QString s = QFileDialog::getOpenFileName(this, "Open file",
                                            QDir::current().path(), filter);
   setTitleName(s);
@@ -175,25 +176,34 @@ void MainWindow::on_actionOpen_clicked() {
 
 void MainWindow::on_actionNew_triggered() {
   ui->plainTextEdit->clear();
+  ui->plainTextEdit->setReadOnly(false);
   setWindowTitle(Name_Programm);
 }
 
 void MainWindow::on_actionSettings_clicked() {
-  QPalette darkPalette;
-  darkPalette.setColor(QPalette::Window, QColor(53, 53, 53));
-  darkPalette.setColor(QPalette::WindowText, Qt::white);
-  darkPalette.setColor(QPalette::Base, QColor(25, 25, 25));
-  darkPalette.setColor(QPalette::AlternateBase, QColor(53, 53, 53));
-  darkPalette.setColor(QPalette::ToolTipBase, Qt::white);
-  darkPalette.setColor(QPalette::ToolTipText, Qt::white);
-  darkPalette.setColor(QPalette::Text, Qt::white);
-  darkPalette.setColor(QPalette::Button, QColor(53, 53, 53));
-  darkPalette.setColor(QPalette::ButtonText, Qt::white);
-  darkPalette.setColor(QPalette::BrightText, Qt::red);
-  darkPalette.setColor(QPalette::Link, QColor(42, 130, 218));
-  darkPalette.setColor(QPalette::Highlight, QColor(42, 130, 218));
-  darkPalette.setColor(QPalette::HighlightedText, Qt::black);
-  qApp->setPalette(darkPalette);
 
-  // qApp->setPalette(style()->standardPalette()); -> не работает
+  settingsWidget settingsWidget(this);
+  settingsWindow->show();
+  //  QPalette darkPalette;
+  //  darkPalette.setColor(QPalette::Window, QColor(53, 53, 53));
+  //  darkPalette.setColor(QPalette::WindowText, Qt::white);
+  //  darkPalette.setColor(QPalette::Base, QColor(25, 25, 25));
+  //  darkPalette.setColor(QPalette::AlternateBase, QColor(53, 53, 53));
+  //  darkPalette.setColor(QPalette::ToolTipBase, Qt::white);
+  //  darkPalette.setColor(QPalette::ToolTipText, Qt::white);
+  //  darkPalette.setColor(QPalette::Text, Qt::white);
+  //  darkPalette.setColor(QPalette::Button, QColor(53, 53, 53));
+  //  darkPalette.setColor(QPalette::ButtonText, Qt::white);
+  //  darkPalette.setColor(QPalette::BrightText, Qt::red);
+  //  darkPalette.setColor(QPalette::Link, QColor(42, 130, 218));
+  //  darkPalette.setColor(QPalette::Highlight, QColor(42, 130, 218));
+  //  darkPalette.setColor(QPalette::HighlightedText, Qt::black);
+  //  qApp->setPalette(darkPalette);
+
+  //  // qApp->setPalette(style()->standardPalette()); -> не работает
+}
+
+void MainWindow::on_actionView_triggered() {
+  on_actionOpen_clicked();
+  ui->plainTextEdit->setReadOnly(true);
 }

@@ -1,13 +1,14 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "highlighter.h"
+#include "settingswidget.h"
 #include <QFile>
 #include <QFileDialog>
 #include <QMainWindow>
 #include <QMessageBox>
 #include <QString>
 #include <QTextCodec>
-#include <highlighter.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -29,14 +30,16 @@ private slots:
   void on_actionSettings_clicked();
   void on_actionNew_triggered();
 
+  void on_actionView_triggered();
+
 private:
   Ui::MainWindow *ui;
   Highlighter *m_highlighter;
+  settingsWidget *settingsWindow;
   QString filter;
   QString hedersFile;
   const QString Name_Programm = "Blade Runner";
   void setTitleName(QString s);
   QFont font;
-  // bool style_wdget = true;
 };
 #endif // MAINWINDOW_H
