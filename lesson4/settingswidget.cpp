@@ -1,149 +1,84 @@
 #include "settingswidget.h"
 #include <QtWidgets>
 
-//! [0]
-settingsWidget::settingsWidget(QWidget *parent) : QDialog(parent) {
-  QFileInfo fileInfo("fileName");
+SettingsWidget::SettingsWidget(QWidget *parent) : QDialog(parent) {
+  QFileInfo fileInfo("Settings");
 
   tabWidget = new QTabWidget;
-  tabWidget->addTab(new GeneralTab(fileInfo), tr("General"));
-  tabWidget->addTab(new PermissionsTab(fileInfo), tr("Permissions"));
-  tabWidget->addTab(new ApplicationsTab(fileInfo), tr("Applications"));
-  //! [0]
+  tabWidget->addTab(new GeneralTab(), tr("General"));
+  tabWidget->addTab(new FontTab(), tr("Font"));
+  tabWidget->addTab(new KeyBoardTab(), tr("Keyboard"));
 
-  //! [1] //! [2]
   buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok
-                                   //! [1] //! [3]
+
                                    | QDialogButtonBox::Cancel);
 
   connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
   connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
-  //! [2] //! [3]
 
-  //! [4]
   QVBoxLayout *mainLayout = new QVBoxLayout;
   mainLayout->addWidget(tabWidget);
   mainLayout->addWidget(buttonBox);
   setLayout(mainLayout);
-  //! [4]
 
-  //! [5]
-  setWindowTitle(tr("Tab Dialog"));
+  setWindowTitle(tr("Settings"));
 }
-//! [5]
 
-//! [6]
-GeneralTab::GeneralTab(const QFileInfo &fileInfo, QWidget *parent)
-    : QWidget(parent) {
-  QLabel *fileNameLabel = new QLabel(tr("File Name:"));
-  QLineEdit *fileNameEdit = new QLineEdit(fileInfo.fileName());
+GeneralTab::GeneralTab(QWidget *parent) : QWidget(parent) {
 
-  QLabel *pathLabel = new QLabel(tr("Path:"));
-  QLabel *pathValueLabel = new QLabel(fileInfo.absoluteFilePath());
-  pathValueLabel->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+  connect(styleComboBox, &QComboBox::textActivated, this,
+          &GeneralTab::changeStyle);
 
-  QLabel *sizeLabel = new QLabel(tr("Size:"));
-  qlonglong size = fileInfo.size() / 1024;
-  QLabel *sizeValueLabel = new QLabel(tr("%1 K").arg(size));
-  sizeValueLabel->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+  QLabel *languageLabel = new QLabel(tr("language:"));
+  QComboBox *setlanguage = new QComboBox();
+  setlanguage->addItem("English");
+  setlanguage->addItem("Belarus");
 
-  QLabel *lastReadLabel = new QLabel(tr("Last Read:"));
-  QLabel *lastReadValueLabel = new QLabel(fileInfo.lastRead().toString());
-  lastReadValueLabel->setFrameStyle(QFrame::Panel | QFrame::Sunken);
-
-  QLabel *lastModLabel = new QLabel(tr("Last Modified:"));
-  QLabel *lastModValueLabel = new QLabel(fileInfo.lastModified().toString());
-  lastModValueLabel->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+  QLabel *styleLabel = new QLabel(tr("Style:"));
+  styleComboBox = new QComboBox;
+  const QString defaultStyleName = QApplication::style()->objectName();
+  QStringList styleNames = QStyleFactory::keys();
+  styleNames.append("dark");
+  styleNames.append("custom");
+  styleComboBox->addItems(styleNames);
 
   QVBoxLayout *mainLayout = new QVBoxLayout;
-  mainLayout->addWidget(fileNameLabel);
-  mainLayout->addWidget(fileNameEdit);
-  mainLayout->addWidget(pathLabel);
-  mainLayout->addWidget(pathValueLabel);
-  mainLayout->addWidget(sizeLabel);
-  mainLayout->addWidget(sizeValueLabel);
-  mainLayout->addWidget(lastReadLabel);
-  mainLayout->addWidget(lastReadValueLabel);
-  mainLayout->addWidget(lastModLabel);
-  mainLayout->addWidget(lastModValueLabel);
+  mainLayout->addWidget(languageLabel);
+  mainLayout->addWidget(setlanguage);
+  mainLayout->addWidget(styleLabel);
+  mainLayout->addWidget(styleComboBox);
   mainLayout->addStretch(1);
   setLayout(mainLayout);
 }
-//! [6]
 
-//! [7]
-PermissionsTab::PermissionsTab(const QFileInfo &fileInfo, QWidget *parent)
-    : QWidget(parent) {
-  QGroupBox *permissionsGroup = new QGroupBox(tr("Permissions"));
+FontTab::FontTab(QWidget *parent) : QWidget(parent) {}
+KeyBoardTab::KeyBoardTab(QWidget *parent) : QWidget(parent) {
 
-  QCheckBox *readable = new QCheckBox(tr("Readable"));
-  if (fileInfo.isReadable())
-    readable->setChecked(true);
+  QGroupBox *setShortcutUserGroup = new QGroupBox(tr("Shortcut Users"));
 
-  QCheckBox *writable = new QCheckBox(tr("Writable"));
-  if (fileInfo.isWritable())
-    writable->setChecked(true);
+  QLabel *KeySave = new QLabel(tr("Save:"));
+  QLineEdit *KeySaveEdit = new QLineEdit();
 
-  QCheckBox *executable = new QCheckBox(tr("Executable"));
-  if (fileInfo.isExecutable())
-    executable->setChecked(true);
+  QLabel *KeyOpen = new QLabel(tr("Open:"));
+  QLineEdit *KeyOpenEdit = new QLineEdit();
 
-  QGroupBox *ownerGroup = new QGroupBox(tr("Ownership"));
+  QLabel *KeyNew = new QLabel(tr("New:"));
+  QLineEdit *KeyNewEdit = new QLineEdit();
 
-  QLabel *ownerLabel = new QLabel(tr("Owner"));
-  QLabel *ownerValueLabel = new QLabel(fileInfo.owner());
-  ownerValueLabel->setFrameStyle(QFrame::Panel | QFrame::Sunken);
-
-  QLabel *groupLabel = new QLabel(tr("Group"));
-  QLabel *groupValueLabel = new QLabel(fileInfo.group());
-  groupValueLabel->setFrameStyle(QFrame::Panel | QFrame::Sunken);
-
-  QVBoxLayout *permissionsLayout = new QVBoxLayout;
-  permissionsLayout->addWidget(readable);
-  permissionsLayout->addWidget(writable);
-  permissionsLayout->addWidget(executable);
-  permissionsGroup->setLayout(permissionsLayout);
-
-  QVBoxLayout *ownerLayout = new QVBoxLayout;
-  ownerLayout->addWidget(ownerLabel);
-  ownerLayout->addWidget(ownerValueLabel);
-  ownerLayout->addWidget(groupLabel);
-  ownerLayout->addWidget(groupValueLabel);
-  ownerGroup->setLayout(ownerLayout);
-
+  QVBoxLayout *setShortcutUserLayout = new QVBoxLayout;
+  setShortcutUserLayout->addWidget(KeySave);
+  setShortcutUserLayout->addWidget(KeySaveEdit);
+  setShortcutUserLayout->addWidget(KeyOpen);
+  setShortcutUserLayout->addWidget(KeyOpenEdit);
+  setShortcutUserLayout->addWidget(KeyNew);
+  setShortcutUserLayout->addWidget(KeyNewEdit);
+  setShortcutUserGroup->setLayout(setShortcutUserLayout);
   QVBoxLayout *mainLayout = new QVBoxLayout;
-  mainLayout->addWidget(permissionsGroup);
-  mainLayout->addWidget(ownerGroup);
+  mainLayout->addWidget(setShortcutUserGroup);
   mainLayout->addStretch(1);
   setLayout(mainLayout);
 }
-//! [7]
 
-//! [8]
-ApplicationsTab::ApplicationsTab(const QFileInfo &fileInfo, QWidget *parent)
-    : QWidget(parent) {
-  QLabel *topLabel = new QLabel(tr("Open with:"));
-
-  QListWidget *applicationsListBox = new QListWidget;
-  QStringList applications;
-
-  for (int i = 1; i <= 30; ++i)
-    applications.append(tr("Application %1").arg(i));
-  applicationsListBox->insertItems(0, applications);
-
-  QCheckBox *alwaysCheckBox;
-
-  if (fileInfo.suffix().isEmpty())
-    alwaysCheckBox = new QCheckBox(tr("Always use this application to "
-                                      "open this type of file"));
-  else
-    alwaysCheckBox = new QCheckBox(tr("Always use this application to "
-                                      "open files with the extension '%1'")
-                                       .arg(fileInfo.suffix()));
-
-  QVBoxLayout *layout = new QVBoxLayout;
-  layout->addWidget(topLabel);
-  layout->addWidget(applicationsListBox);
-  layout->addWidget(alwaysCheckBox);
-  setLayout(layout);
+void GeneralTab::changeStyle(const QString &styleName) {
+  QApplication::setStyle(QStyleFactory::create(styleName));
 }

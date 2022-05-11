@@ -44,6 +44,7 @@
     </property>
     <addaction name="actionSettings"/>
     <addaction name="actionHelp"/>
+    <addaction name="actionLang"/>
    </widget>
    <addaction name="menufile"/>
    <addaction name="menuHelp"/>
@@ -89,6 +90,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+W</string>
+   </property>
+  </action>
+  <action name="actionLang">
+   <property name="text">
+    <string>Lang</string>
    </property>
   </action>
  </widget>

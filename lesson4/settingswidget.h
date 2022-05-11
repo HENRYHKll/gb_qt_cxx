@@ -1,53 +1,48 @@
-#ifndef TABDIALOG_H
-#define TABDIALOG_H
+#ifndef SettingsWidget_H
+#define SettingsWidget_H
 
 #include <QDialog>
-
 QT_BEGIN_NAMESPACE
 class QDialogButtonBox;
 class QFileInfo;
 class QTabWidget;
+class QComboBox;
 QT_END_NAMESPACE
 
-//! [0]
 class GeneralTab : public QWidget {
   Q_OBJECT
 
 public:
-  explicit GeneralTab(const QFileInfo &fileInfo, QWidget *parent = nullptr);
-};
-//! [0]
+  explicit GeneralTab(QWidget *parent = nullptr);
 
-//! [1]
-class PermissionsTab : public QWidget {
+private slots:
+  void changeStyle(const QString &styleName);
+
+private:
+  QComboBox *styleComboBox;
+};
+class FontTab : public QWidget {
   Q_OBJECT
 
 public:
-  explicit PermissionsTab(const QFileInfo &fileInfo, QWidget *parent = nullptr);
+  explicit FontTab(QWidget *parent = nullptr);
 };
-//! [1]
-
-//! [2]
-class ApplicationsTab : public QWidget {
+class KeyBoardTab : public QWidget {
   Q_OBJECT
 
 public:
-  explicit ApplicationsTab(const QFileInfo &fileInfo,
-                           QWidget *parent = nullptr);
+  explicit KeyBoardTab(QWidget *parent = nullptr);
 };
-//! [2]
 
-//! [3]
-class settingsWidget : public QDialog {
+class SettingsWidget : public QDialog {
   Q_OBJECT
 
 public:
-  explicit settingsWidget(QWidget *parent = nullptr);
+  explicit SettingsWidget(QWidget *parent = nullptr);
 
 private:
   QTabWidget *tabWidget;
   QDialogButtonBox *buttonBox;
 };
-//! [3]
 
 #endif

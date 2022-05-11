@@ -1,7 +1,9 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <QApplication>
 #include <QDataStream>
 #include <QHash>
+#include <QStyleFactory>
 #include <QTextStream>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -9,7 +11,6 @@ MainWindow::MainWindow(QWidget *parent)
   ui->setupUi(this);
   setWindowTitle(Name_Programm);
   hedersFile.clear();
-  filter = trUtf8("all(*.*);;bin file(*.bin)");
   connect(ui->actionOpen, &QAction::triggered, this,
           &MainWindow::on_actionOpen_clicked);
   connect(ui->actionSave, &QAction::triggered, this,
@@ -18,11 +19,13 @@ MainWindow::MainWindow(QWidget *parent)
           &MainWindow::on_actionHelp_clicked);
   connect(ui->actionSettings, &QAction::triggered, this,
           &MainWindow::on_actionSettings_clicked);
+  connect(ui->actionLang, &QAction::triggered, this,
+          &MainWindow::on_actionlang_triggered);
 
-  font.setFamily("Courier");
-  font.setFixedPitch(true);
-  font.setPointSize(13);
-  ui->plainTextEdit->setFont(font);
+  font_texeditors.setFamily("Courier");
+  font_texeditors.setFixedPitch(true);
+  font_texeditors.setPointSize(13);
+  ui->plainTextEdit->setFont(font_texeditors);
 
   m_highlighter = new Highlighter(ui->plainTextEdit->document());
 }
@@ -182,8 +185,9 @@ void MainWindow::on_actionNew_triggered() {
 
 void MainWindow::on_actionSettings_clicked() {
 
-  settingsWidget settingsWidget(this);
-  settingsWindow->show();
+  SettingsWindow = new SettingsWidget(this);
+  SettingsWindow->show();
+
   //  QPalette darkPalette;
   //  darkPalette.setColor(QPalette::Window, QColor(53, 53, 53));
   //  darkPalette.setColor(QPalette::WindowText, Qt::white);
@@ -199,11 +203,20 @@ void MainWindow::on_actionSettings_clicked() {
   //  darkPalette.setColor(QPalette::Highlight, QColor(42, 130, 218));
   //  darkPalette.setColor(QPalette::HighlightedText, Qt::black);
   //  qApp->setPalette(darkPalette);
-
-  //  // qApp->setPalette(style()->standardPalette()); -> не работает
 }
 
 void MainWindow::on_actionView_triggered() {
   on_actionOpen_clicked();
   ui->plainTextEdit->setReadOnly(true);
+}
+
+void MainWindow::on_actionlang_triggered() {
+  translaterLang.load(QString("QtLanguage_") + QString("by"));
+  qApp->installTranslator(&translaterLang);
+}
+
+void MainWindow::changeEvent(QEvent *event) {
+  if (event->type() == QEvent::LanguageChange) {
+    ui->retranslateUi(this);
+  }
 }
