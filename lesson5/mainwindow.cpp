@@ -21,6 +21,8 @@ MainWindow::MainWindow(QWidget *parent)
           &MainWindow::on_actionSettings_clicked);
   connect(ui->actionLang, &QAction::triggered, this,
           &MainWindow::on_actionlang_triggered);
+  connect(ui->actionTheme, &QAction::triggered, this,
+          &MainWindow::on_actionTheme_triggered);
 
   font_texeditors.setFamily("Courier");
   font_texeditors.setFixedPitch(true);
@@ -187,22 +189,6 @@ void MainWindow::on_actionSettings_clicked() {
 
   SettingsWindow = new SettingsWidget(this);
   SettingsWindow->show();
-
-  //  QPalette darkPalette;
-  //  darkPalette.setColor(QPalette::Window, QColor(53, 53, 53));
-  //  darkPalette.setColor(QPalette::WindowText, Qt::white);
-  //  darkPalette.setColor(QPalette::Base, QColor(25, 25, 25));
-  //  darkPalette.setColor(QPalette::AlternateBase, QColor(53, 53, 53));
-  //  darkPalette.setColor(QPalette::ToolTipBase, Qt::white);
-  //  darkPalette.setColor(QPalette::ToolTipText, Qt::white);
-  //  darkPalette.setColor(QPalette::Text, Qt::white);
-  //  darkPalette.setColor(QPalette::Button, QColor(53, 53, 53));
-  //  darkPalette.setColor(QPalette::ButtonText, Qt::white);
-  //  darkPalette.setColor(QPalette::BrightText, Qt::red);
-  //  darkPalette.setColor(QPalette::Link, QColor(42, 130, 218));
-  //  darkPalette.setColor(QPalette::Highlight, QColor(42, 130, 218));
-  //  darkPalette.setColor(QPalette::HighlightedText, Qt::black);
-  //  qApp->setPalette(darkPalette);
 }
 
 void MainWindow::on_actionView_triggered() {
@@ -221,4 +207,34 @@ void MainWindow::changeEvent(QEvent *event) {
   if (event->type() == QEvent::LanguageChange) {
     ui->retranslateUi(this);
   }
+}
+
+void MainWindow::on_actionTheme_triggered() {
+  if (themeColor == "default") {
+    themeColor = "dark";
+    QPalette darkPalette;
+    darkPalette.setColor(QPalette::Window, QColor(53, 53, 53));
+    darkPalette.setColor(QPalette::WindowText, Qt::white);
+    darkPalette.setColor(QPalette::Base, QColor(25, 25, 25));
+    darkPalette.setColor(QPalette::AlternateBase, QColor(53, 53, 53));
+    darkPalette.setColor(QPalette::ToolTipBase, Qt::white);
+    darkPalette.setColor(QPalette::ToolTipText, Qt::white);
+    darkPalette.setColor(QPalette::Text, Qt::white);
+    darkPalette.setColor(QPalette::Button, QColor(53, 53, 53));
+    darkPalette.setColor(QPalette::ButtonText, Qt::white);
+    darkPalette.setColor(QPalette::BrightText, Qt::red);
+    darkPalette.setColor(QPalette::Link, QColor(42, 130, 218));
+    darkPalette.setColor(QPalette::Highlight, QColor(42, 130, 218));
+    darkPalette.setColor(QPalette::HighlightedText, Qt::black);
+    qApp->setPalette(darkPalette);
+  }
+  if (themeColor == "dark") {
+    // qApp->setPalette(style()->standardPalette()); НЕ РАБОТАЕТ НЕ ПОНИМАЮ
+    themeColor = "default";
+  }
+}
+
+void MainWindow::on_actionTree_triggered() {
+  TreeWin = new Tree(this);
+  TreeWin->show();
 }

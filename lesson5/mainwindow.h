@@ -3,6 +3,7 @@
 
 #include "highlighter.h"
 #include "settingswidget.h"
+#include "tree.h"
 #include <QFile>
 #include <QFileDialog>
 #include <QMainWindow>
@@ -32,6 +33,9 @@ private slots:
   void on_actionNew_triggered();
   void on_actionlang_triggered();
   void on_actionView_triggered();
+  void on_actionTheme_triggered();
+
+  void on_actionTree_triggered();
 
 protected:
   void changeEvent(QEvent *event) override;
@@ -40,6 +44,7 @@ private:
   Ui::MainWindow *ui;
   Highlighter *m_highlighter;
   SettingsWidget *SettingsWindow;
+  Tree *TreeWin;
 
   const QString filter = trUtf8("all(*.*);;bin file(*.bin)");
   QString hedersFile;
@@ -47,5 +52,6 @@ private:
   void setTitleName(QString s);
   QFont font_texeditors;
   QTranslator qTranslator;
+  QString themeColor = "default";
 };
 #endif // MAINWINDOW_H
