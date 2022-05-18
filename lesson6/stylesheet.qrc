@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qss/default.qss</file>
+        <file>QtLanguage_by.qm</file>
+    </qresource>
+    <qresource prefix="/img">
+        <file>qss/printer.png</file>
+    </qresource>
+</RCC>
