@@ -487,6 +487,13 @@ void MainWindow::openSettings() {
   }
   settingsWindows->show();
 }
+
+void MainWindow::openFigureWindow() {
+  if (!figureWindow) {
+    figureWindow = new FigureWindow(this);
+  }
+  figureWindow->show();
+}
 void MainWindow::setDefaultTheme() { defaultPalette = new QPalette; }
 void MainWindow::setDarkTheme() {
   darkPalette = new QPalette;
@@ -735,6 +742,15 @@ void MainWindow::setupTextActions()
     menu->addActions(alignGroup->actions());
 
     menu->addSeparator();
+
+
+    const QIcon checkboxIcon = QIcon::fromTheme("figure-open-window", QIcon(":/file/icon/paint.png"));
+    actionFigureWindow = menu->addAction(checkboxIcon, tr("Chec&ked"), this, &MainWindow::openFigureWindow);
+    actionFigureWindow->setShortcut(Qt::CTRL + Qt::Key_K);
+    actionFigureWindow->setCheckable(true);
+    actionFigureWindow->setPriority(QAction::LowPriority);
+    tb->addAction(actionFigureWindow);
+
 
     tb = addToolBar(tr("Format Actions"));
     tb->setAllowedAreas(Qt::TopToolBarArea | Qt::BottomToolBarArea);

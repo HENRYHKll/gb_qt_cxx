@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "figure.h"
 #include "settingswidget.h"
 #include <QMainWindow>
 #include <QPlainTextEdit>
@@ -47,6 +48,7 @@ private slots:
   MidChildTxt *createMdiChild();
   void switchLayoutDirection();
   void openSettings();
+  void openFigureWindow();
   void toPrintDoc();
 
 private:
@@ -101,6 +103,7 @@ private:
   void textFamily(const QString &f);
   QComboBox *comboSize;
   void textSize(const QString &p);
+  QAction *actionFigureWindow;
 //----------------------
   QAction *closeAct;
   QAction *closeAllAct;
@@ -110,6 +113,7 @@ private:
   QAction *previousAct;
   QAction *windowMenuSeparatorAct;
   SettingsWidget *settingsWindows = nullptr;
+  FigureWindow * figureWindow =nullptr;
   const QString nameProgramm = "Blade Runner";
   QPlainTextEdit *printDoc;
   //  QString themeColor = "default";

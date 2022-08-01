@@ -17,5 +17,6 @@
         <file>icon/textleft.png</file>
         <file>icon/textright.png</file>
         <file>icon/textunder.png</file>
+        <file>icon/paint.png</file>
     </qresource>
 </RCC>
