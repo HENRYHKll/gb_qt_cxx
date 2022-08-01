@@ -10,5 +10,12 @@
         <file>icon/save.svg</file>
         <file>icon/paste.svg</file>
         <file>icon/icon-programm.svg</file>
+        <file>icon/textbold.png</file>
+        <file>icon/textcenter.png</file>
+        <file>icon/textitalic.png</file>
+        <file>icon/textjustify.png</file>
+        <file>icon/textleft.png</file>
+        <file>icon/textright.png</file>
+        <file>icon/textunder.png</file>
     </qresource>
 </RCC>

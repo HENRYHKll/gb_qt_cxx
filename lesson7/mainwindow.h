@@ -7,6 +7,7 @@
 
 class MidChildTxt;
 QT_BEGIN_NAMESPACE
+class QFontComboBox;
 class QAction;
 class QMenu;
 class QMdiArea;
@@ -81,6 +82,26 @@ private:
   QAction *copyAct;
   QAction *pasteAct;
 #endif
+//----------------------
+  QAction *actionTextBold;
+  QAction *actionTextItalic;
+  QAction *actionTextUnderline;
+  QAction *actionAlignLeft;
+  QAction *actionAlignCenter;
+  QAction *actionAlignRight;
+  QAction *actionAlignJustify;
+  void textBold();
+  void textUnderline();
+  void textItalic();
+  void mergeFormatOnWordOrSelection(const QTextCharFormat &format);
+  void textAlign(QAction *a);
+  QComboBox *comboStyle;
+  void textStyle(int styleIndex);
+  QFontComboBox *comboFont;
+  void textFamily(const QString &f);
+  QComboBox *comboSize;
+  void textSize(const QString &p);
+//----------------------
   QAction *closeAct;
   QAction *closeAllAct;
   QAction *tileAct;
@@ -96,5 +117,6 @@ private:
   QPalette *defaultPalette = nullptr;
   void setDefaultTheme();
   void setDarkTheme();
+  void setupTextActions();
 };
 #endif // MAINWINDOW_H

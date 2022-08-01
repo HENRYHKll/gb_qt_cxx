@@ -19,7 +19,7 @@ MainWindow::MainWindow(QWidget *parent)
   createActions();
   createStatusBar();
   updateMenus();
-
+  setupTextActions();
   readSettings();
 
   setWindowTitle(nameProgramm);
@@ -517,5 +517,267 @@ void MainWindow::setThemeColor(QString themeColor) {
   }
 }
 
+void MainWindow::mergeFormatOnWordOrSelection(const QTextCharFormat &format)
+{
+    QTextCursor cursor = activeMdiChild()->textCursor();
+    if (!cursor.hasSelection())
+        cursor.select(QTextCursor::WordUnderCursor);
+    cursor.mergeCharFormat(format);
+    activeMdiChild()->mergeCurrentCharFormat(format);
+}
+
+void MainWindow::textBold()
+{
+    QTextCharFormat fmt;
+    fmt.setFontWeight(actionTextBold->isChecked() ? QFont::Bold : QFont::Normal);
+    mergeFormatOnWordOrSelection(fmt);
+}
+
+void MainWindow::textUnderline()
+{
+    QTextCharFormat fmt;
+    fmt.setFontUnderline(actionTextUnderline->isChecked());
+    mergeFormatOnWordOrSelection(fmt);
+}
+
+void MainWindow::textItalic()
+{
+    QTextCharFormat fmt;
+    fmt.setFontItalic(actionTextItalic->isChecked());
+    mergeFormatOnWordOrSelection(fmt);
+}
+void MainWindow::textAlign(QAction *a)
+{
+    if (a == actionAlignLeft)
+        activeMdiChild()->setAlignment(Qt::AlignLeft | Qt::AlignAbsolute);
+    else if (a == actionAlignCenter)
+        activeMdiChild()->setAlignment(Qt::AlignHCenter);
+    else if (a == actionAlignRight)
+        activeMdiChild()->setAlignment(Qt::AlignRight | Qt::AlignAbsolute);
+    else if (a == actionAlignJustify)
+        activeMdiChild()->setAlignment(Qt::AlignJustify);
+}
+
+void MainWindow::textStyle(int styleIndex)
+{
+    QTextCursor cursor = activeMdiChild()->textCursor();
+    QTextListFormat::Style style = QTextListFormat::ListStyleUndefined;
+    QTextBlockFormat::MarkerType marker = QTextBlockFormat::MarkerType::NoMarker;
+
+    switch (styleIndex) {
+    case 1:
+        style = QTextListFormat::ListDisc;
+        break;
+    case 2:
+        style = QTextListFormat::ListCircle;
+        break;
+    case 3:
+        style = QTextListFormat::ListSquare;
+        break;
+    case 4:
+        if (cursor.currentList())
+            style = cursor.currentList()->format().style();
+        else
+            style = QTextListFormat::ListDisc;
+        marker = QTextBlockFormat::MarkerType::Unchecked;
+        break;
+    case 5:
+        if (cursor.currentList())
+            style = cursor.currentList()->format().style();
+        else
+            style = QTextListFormat::ListDisc;
+        marker = QTextBlockFormat::MarkerType::Checked;
+        break;
+    case 6:
+        style = QTextListFormat::ListDecimal;
+        break;
+    case 7:
+        style = QTextListFormat::ListLowerAlpha;
+        break;
+    case 8:
+        style = QTextListFormat::ListUpperAlpha;
+        break;
+    case 9:
+        style = QTextListFormat::ListLowerRoman;
+        break;
+    case 10:
+        style = QTextListFormat::ListUpperRoman;
+        break;
+    default:
+        break;
+    }
+
+    cursor.beginEditBlock();
+
+    QTextBlockFormat blockFmt = cursor.blockFormat();
+
+    if (style == QTextListFormat::ListStyleUndefined) {
+        blockFmt.setObjectIndex(-1);
+        int headingLevel = styleIndex >= 11 ? styleIndex - 11 + 1 : 0; // H1 to H6, or Standard
+        blockFmt.setHeadingLevel(headingLevel);
+        cursor.setBlockFormat(blockFmt);
+
+        int sizeAdjustment = headingLevel ? 4 - headingLevel : 0; // H1 to H6: +3 to -2
+        QTextCharFormat fmt;
+        fmt.setFontWeight(headingLevel ? QFont::Bold : QFont::Normal);
+        fmt.setProperty(QTextFormat::FontSizeAdjustment, sizeAdjustment);
+        cursor.select(QTextCursor::LineUnderCursor);
+        cursor.mergeCharFormat(fmt);
+        activeMdiChild()->mergeCurrentCharFormat(fmt);
+    } else {
+        blockFmt.setMarker(marker);
+        cursor.setBlockFormat(blockFmt);
+        QTextListFormat listFmt;
+        if (cursor.currentList()) {
+            listFmt = cursor.currentList()->format();
+        } else {
+            listFmt.setIndent(blockFmt.indent() + 1);
+            blockFmt.setIndent(0);
+            cursor.setBlockFormat(blockFmt);
+        }
+        listFmt.setStyle(style);
+        cursor.createList(listFmt);
+    }
+
+    cursor.endEditBlock();
+}
+
+void MainWindow::textFamily(const QString &f)
+{
+    QTextCharFormat fmt;
+    fmt.setFontFamily(f);
+    mergeFormatOnWordOrSelection(fmt);
+}
+
+void MainWindow::textSize(const QString &p)
+{
+    qreal pointSize = p.toFloat();
+    if (p.toFloat() > 0) {
+        QTextCharFormat fmt;
+        fmt.setFontPointSize(pointSize);
+        mergeFormatOnWordOrSelection(fmt);
+    }
+}
+void MainWindow::setupTextActions()
+{
+    QToolBar *tb = addToolBar(tr("Format Actions"));
+    QMenu *menu = menuBar()->addMenu(tr("F&ormat"));
+
+    const QIcon boldIcon = QIcon::fromTheme("format-text-bold", QIcon(":/file/icon/textbold.png"));
+    actionTextBold = menu->addAction(boldIcon, tr("&Bold"), this, &MainWindow::textBold);
+    actionTextBold->setShortcut(Qt::CTRL + Qt::Key_B);
+    actionTextBold->setPriority(QAction::LowPriority);
+    QFont bold;
+    bold.setBold(true);
+    actionTextBold->setFont(bold);
+    tb->addAction(actionTextBold);
+    actionTextBold->setCheckable(true);
+
+    const QIcon italicIcon = QIcon::fromTheme("format-text-italic", QIcon(":/file/icon/textitalic.png"));
+    actionTextItalic = menu->addAction(italicIcon, tr("&Italic"), this, &MainWindow::textItalic);
+    actionTextItalic->setPriority(QAction::LowPriority);
+    actionTextItalic->setShortcut(Qt::CTRL + Qt::Key_I);
+    QFont italic;
+    italic.setItalic(true);
+    actionTextItalic->setFont(italic);
+    tb->addAction(actionTextItalic);
+    actionTextItalic->setCheckable(true);
+
+    const QIcon underlineIcon = QIcon::fromTheme("format-text-underline", QIcon(":/file/icon/textunder.png"));
+    actionTextUnderline = menu->addAction(underlineIcon, tr("&Underline"), this, &MainWindow::textUnderline);
+    actionTextUnderline->setShortcut(Qt::CTRL + Qt::Key_U);
+    actionTextUnderline->setPriority(QAction::LowPriority);
+    QFont underline;
+    underline.setUnderline(true);
+    actionTextUnderline->setFont(underline);
+    tb->addAction(actionTextUnderline);
+    actionTextUnderline->setCheckable(true);
+
+    menu->addSeparator();
+
+    const QIcon leftIcon = QIcon::fromTheme("format-justify-left", QIcon(":/file/icon/textleft.png"));
+    actionAlignLeft = new QAction(leftIcon, tr("&Left"), this);
+    actionAlignLeft->setShortcut(Qt::CTRL + Qt::Key_L);
+    actionAlignLeft->setCheckable(true);
+    actionAlignLeft->setPriority(QAction::LowPriority);
+    const QIcon centerIcon = QIcon::fromTheme("format-justify-center", QIcon(":/file/icon/textcenter.png"));
+    actionAlignCenter = new QAction(centerIcon, tr("C&enter"), this);
+    actionAlignCenter->setShortcut(Qt::CTRL + Qt::Key_E);
+    actionAlignCenter->setCheckable(true);
+    actionAlignCenter->setPriority(QAction::LowPriority);
+    const QIcon rightIcon = QIcon::fromTheme("format-justify-right", QIcon(":/file/icon/textright.png"));
+    actionAlignRight = new QAction(rightIcon, tr("&Right"), this);
+    actionAlignRight->setShortcut(Qt::CTRL + Qt::Key_R);
+    actionAlignRight->setCheckable(true);
+    actionAlignRight->setPriority(QAction::LowPriority);
+    const QIcon fillIcon = QIcon::fromTheme("format-justify-fill", QIcon(":/file/icon/textjustify.png"));
+    actionAlignJustify = new QAction(fillIcon, tr("&Justify"), this);
+    actionAlignJustify->setShortcut(Qt::CTRL + Qt::Key_J);
+    actionAlignJustify->setCheckable(true);
+    actionAlignJustify->setPriority(QAction::LowPriority);
+
+    // Make sure the alignLeft  is always left of the alignRight
+    QActionGroup *alignGroup = new QActionGroup(this);
+    connect(alignGroup, &QActionGroup::triggered, this, &MainWindow::textAlign);
+
+    if (QApplication::isLeftToRight()) {
+        alignGroup->addAction(actionAlignLeft);
+        alignGroup->addAction(actionAlignCenter);
+        alignGroup->addAction(actionAlignRight);
+    } else {
+        alignGroup->addAction(actionAlignRight);
+        alignGroup->addAction(actionAlignCenter);
+        alignGroup->addAction(actionAlignLeft);
+    }
+    alignGroup->addAction(actionAlignJustify);
+
+    tb->addActions(alignGroup->actions());
+    menu->addActions(alignGroup->actions());
+
+    menu->addSeparator();
+
+    tb = addToolBar(tr("Format Actions"));
+    tb->setAllowedAreas(Qt::TopToolBarArea | Qt::BottomToolBarArea);
+    addToolBarBreak(Qt::TopToolBarArea);
+    addToolBar(tb);
+
+    comboStyle = new QComboBox(tb);
+    tb->addWidget(comboStyle);
+    comboStyle->addItem("Standard");
+    comboStyle->addItem("Bullet List (Disc)");
+    comboStyle->addItem("Bullet List (Circle)");
+    comboStyle->addItem("Bullet List (Square)");
+    comboStyle->addItem("Task List (Unchecked)");
+    comboStyle->addItem("Task List (Checked)");
+    comboStyle->addItem("Ordered List (Decimal)");
+    comboStyle->addItem("Ordered List (Alpha lower)");
+    comboStyle->addItem("Ordered List (Alpha upper)");
+    comboStyle->addItem("Ordered List (Roman lower)");
+    comboStyle->addItem("Ordered List (Roman upper)");
+    comboStyle->addItem("Heading 1");
+    comboStyle->addItem("Heading 2");
+    comboStyle->addItem("Heading 3");
+    comboStyle->addItem("Heading 4");
+    comboStyle->addItem("Heading 5");
+    comboStyle->addItem("Heading 6");
+
+    connect(comboStyle, QOverload<int>::of(&QComboBox::activated), this, &MainWindow::textStyle);
+
+    comboFont = new QFontComboBox(tb);
+    tb->addWidget(comboFont);
+    connect(comboFont, &QComboBox::textActivated, this, &MainWindow::textFamily);
+
+    comboSize = new QComboBox(tb);
+    comboSize->setObjectName("comboSize");
+    tb->addWidget(comboSize);
+    comboSize->setEditable(true);
+
+    const QList<int> standardSizes = QFontDatabase::standardSizes();
+    for (int size : standardSizes)
+        comboSize->addItem(QString::number(size));
+    comboSize->setCurrentIndex(standardSizes.indexOf(QApplication::font().pointSize()));
+
+    connect(comboSize, &QComboBox::textActivated, this, &MainWindow::textSize);
+}
 MainWindow::~MainWindow() { /*delete ui;*/
 }
