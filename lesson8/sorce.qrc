@@ -1,0 +1,23 @@
+<RCC>
+    <qresource prefix="/file">
+        <file>icon/file.svg</file>
+        <file>icon/copy.svg</file>
+        <file>icon/cut.svg</file>
+        <file>icon/new.svg</file>
+        <file>icon/open.svg</file>
+        <file>icon/open-file.svg</file>
+        <file>icon/print.svg</file>
+        <file>icon/save.svg</file>
+        <file>icon/paste.svg</file>
+        <file>icon/icon-programm.svg</file>
+        <file>icon/textbold.png</file>
+        <file>icon/textcenter.png</file>
+        <file>icon/textitalic.png</file>
+        <file>icon/textjustify.png</file>
+        <file>icon/textleft.png</file>
+        <file>icon/textright.png</file>
+        <file>icon/textunder.png</file>
+        <file>icon/paint.png</file>
+        <file>icon/calendar.png</file>
+    </qresource>
+</RCC>
